@@ -1,0 +1,36 @@
+{
+  "name": "taxon",
+  "version": "0.0.1",
+  "description": "lookup ids for taxa",
+  "main": "main.js",
+  "dependencies": {
+    "xhr": "2.1.0"
+  },
+  "devDependencies": {
+    "browserify": "^8.1.1",
+    "tape": "^4.2.1",
+    "watchify": "^2.2.1"
+  },
+  "testling": {
+    "files": "test/*.js"
+  },
+  "scripts": {
+    "test": "browserify test/*.js test/browser/*.js | testling"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jhpoelen/taxon.git"
+  },
+  "homepage": "https://github.com/jhpoelen/taxon",
+  "keywords": [
+    "taxonomy",
+    "biology",
+    "names",
+    "name resolution"
+  ],
+  "author": {
+    "name": "Jorrit Poelen",
+    "email": "jhpoelen+npm@gmail.com"
+  },
+  "license": "MIT"
+}
