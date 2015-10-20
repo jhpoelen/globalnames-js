@@ -1,12 +1,16 @@
 var xhr = require('xhr');
 var taxon = {};
 
-taxon.resolverUrlFor = function(names) {
-  var namesString = encodeURIComponent(names.join('|'));
-  var proxiedUrl = 'http://resolver.globalnames.org/name_resolvers.json?names=' + namesString + '&data_source_ids=12';
-  var query = encodeURIComponent('select * from json where url="' + proxiedUrl + '"');
+taxon.proxiedUrl = function(url) {
+  var query = encodeURIComponent('select * from json where url="' + url + '"');
   var uri = 'http://query.yahooapis.com/v1/public/yql?q=' + query;
   return uri;
+}
+
+taxon.resolverUrlFor = function(names) {
+  var namesString = encodeURIComponent(names.join('|'));
+  var url = 'http://resolver.globalnames.org/name_resolvers.json?names=' + namesString + '&data_source_ids=12';
+  return taxon.proxiedUrl(url);
 };
 
 taxon.eolPageIdsFor = function(names, callback) {
@@ -53,5 +57,31 @@ taxon.eolPageIdsFor = function(names, callback) {
     }
   });
 };
+
+
+taxon.saveAsCollection = function(callback, apiToken, ids, name, description) {
+  var items = ids.reduce(function(agg, id) { 
+    return agg.concat([{collected_item_type: 'TaxonConcept', collected_item_id: id}]); },
+    []);
+  var collection = { name: (name || 'my name'), 
+      description: (description || 'my description'),
+      collection_items: items};
+  
+  xhr({
+    body: JSON.stringify({ collection: collection }),
+    method: 'POST',
+    uri: 'http://effechecka-cors-proxy.herokuapp.com',
+    headers: { 'Content-Type': 'application/json',
+      'Target-URL': 'http://eol.org/wapi/collections',
+      'Authorization': 'Token token="' + apiToken + '"' }
+    }, function (err, resp, body) {
+    if (resp.statusCode == 201) {
+      var collectionId = JSON.parse(body).id;
+      callback(collectionId);
+    } else {
+      callback(null);
+    }
+  });
+}
 
 module.exports = taxon;
