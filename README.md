@@ -1,6 +1,6 @@
 # taxon
 
-Lookup taxon ids using [Global Names Resolver](http://resolver.globalnames.org).
+Lookup taxon ids by name using [Global Names Resolver](http://resolver.globalnames.org).
 
 [![build status](https://secure.travis-ci.org/jhpoelen/node-taxon.png)](http://travis-ci.org/jhpoelen/node-taxon)
 
