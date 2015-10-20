@@ -9,11 +9,10 @@ taxon.resolverUrlFor = function(names) {
   return uri;
 };
 
-
 taxon.eolPageIdsFor = function(names, callback) {
+  var isExactMatch = function(result) { return ['1','2'].indexOf(result.match_type) != -1; };
   var uri = taxon.resolverUrlFor(names);
   var extractPageIds = function(results) {
-    var isExactMatch = function(result) { return ['1','2'].indexOf(result.match_type) != -1; };
     var urlHash = results.reduce(function(agg, result) {
       if (isExactMatch(result)) {
         agg[result.local_id] = result.local_id;
@@ -24,7 +23,15 @@ taxon.eolPageIdsFor = function(names, callback) {
   };
 
   var appendPageIds = function(ids, data) {
-    return ids.concat(extractPageIds(data.results));
+    appendedIds = [].concat(ids);
+    if (Array.isArray(data.results)) {
+      appendedIds = appendedIds.concat(extractPageIds(data.results));
+    } else if (data.results) {
+      if (isExactMatch(data.results)) {
+        appendedIds = appendedIds.concat([data.results.local_id]);
+      }
+    } 
+    return appendedIds;  
   };
 
   xhr({
