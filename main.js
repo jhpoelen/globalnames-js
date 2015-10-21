@@ -60,9 +60,14 @@ taxon.eolPageIdsFor = function(names, callback) {
 
 
 taxon.saveAsCollection = function(callback, apiToken, ids, name, description) {
-  var items = ids.reduce(function(agg, id) { 
+  var uniqueIds = ids.filter(function(item, pos) {
+      return ids.indexOf(item) == pos;
+  });
+
+  var items = uniqueIds.reduce(function(agg, id) { 
     return agg.concat([{collected_item_type: 'TaxonConcept', collected_item_id: id}]); },
     []);
+
   var collection = { name: (name || 'my name'), 
       description: (description || 'my description'),
       collection_items: items};
