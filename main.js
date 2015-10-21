@@ -67,8 +67,9 @@ taxon.saveAsCollection = function(callback, apiToken, ids, name, description) {
       description: (description || 'my description'),
       collection_items: items};
   
+  var reqBody = JSON.stringify({ collection: collection });
   xhr({
-    body: JSON.stringify({ collection: collection }),
+    body: reqBody,
     method: 'POST',
     uri: 'http://effechecka-cors-proxy.herokuapp.com',
     headers: { 'Content-Type': 'application/json',
@@ -77,9 +78,9 @@ taxon.saveAsCollection = function(callback, apiToken, ids, name, description) {
     }, function (err, resp, body) {
     if (resp.statusCode == 201) {
       var collectionId = JSON.parse(body).id;
-      callback(collectionId);
+      callback(collectionId, resp, reqBody);
     } else {
-      callback(null);
+      callback(null, resp, reqBody);
     }
   });
 }
