@@ -62,7 +62,7 @@ taxon.eolPageIdsFor = function(names, callback) {
         var pageIds = [];
         if (resp.statusCode == 200) {
           var result = JSON.parse(body);
-            if (typeof(result.query.results.json.data) !== 'undefined') {
+            if (result.query && result.query.results && result.query.results.json) {
               var data = result.query.results.json.data;
               if (Array.isArray(data)) {
                 pageIds = data.reduce(appendPageIds, pageIds);
