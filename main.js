@@ -42,11 +42,11 @@ taxon.eolPageIdsFor = function(names, callback) {
     uri: uri,
     headers: { 'Accept': 'application/json' }
   }, function (err, resp, body) {
+    var pageIds = [];
     if (resp.statusCode == 200) {
       var result = JSON.parse(body);
       if (result) {
         var data = result.query.results.json.data;
-        var pageIds = [];
         if (Array.isArray(data)) {
           pageIds = data.reduce(appendPageIds, pageIds);
         } else {
@@ -54,6 +54,8 @@ taxon.eolPageIdsFor = function(names, callback) {
         }
         callback(pageIds);
       }
+    } else {
+      callback(pageIds);
     }
   });
 };
