@@ -8,6 +8,24 @@ test('get page id for Homo sapiens and Enhydra lutris', function(t) {
   });
 });
 
+test('get page id for Homo sapiens', function (t) {
+      t.plan(1);
+          var testCallback = function(pageIds) {
+                  t.deepEquals(pageIds, ['327955']);
+                      };
+              var names = ['Homo sapiens'];
+                  taxon.eolPageIdsFor(names, testCallback);
+});
+
+test('get page id for Homo sapiens', function (t) {
+      t.plan(1);
+          var testCallback = function(pageIds) {
+                  t.deepEquals(pageIds, []);
+                      };
+              var names = ['Homo sapiensz'];
+                  taxon.eolPageIdsFor(names, testCallback);
+});
+
 test('thousand and one names', function(t) {
   t.plan(1);
   var names = ['Homo sapiens'];
