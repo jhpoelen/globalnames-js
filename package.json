@@ -1,9 +1,10 @@
 {
   "name": "taxon",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "lookup ids for taxa",
   "main": "main.js",
   "dependencies": {
+    "queue": "^3.1.0",
     "xhr": "2.1.0"
   },
   "devDependencies": {

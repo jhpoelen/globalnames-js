@@ -1,4 +1,5 @@
 var xhr = require('xhr');
+var queue = require('queue');
 var taxon = {};
 
 taxon.proxiedUrl = function(url) {
@@ -15,7 +16,6 @@ taxon.resolverUrlFor = function(names) {
 
 taxon.eolPageIdsFor = function(names, callback) {
   var isExactMatch = function(result) { return ['1','2'].indexOf(result.match_type) != -1; };
-  var uri = taxon.resolverUrlFor(names);
   var extractPageIds = function(results) {
     var urlHash = results.reduce(function(agg, result) {
       if (isExactMatch(result)) {
@@ -28,35 +28,56 @@ taxon.eolPageIdsFor = function(names, callback) {
 
   var appendPageIds = function(ids, data) {
     appendedIds = [].concat(ids);
-    if (Array.isArray(data.results)) {
-      appendedIds = appendedIds.concat(extractPageIds(data.results));
-    } else if (data.results) {
-      if (isExactMatch(data.results)) {
-        appendedIds = appendedIds.concat([data.results.local_id]);
+    if (data && data.results) {
+      if (Array.isArray(data.results)) {
+        appendedIds = appendedIds.concat(extractPageIds(data.results));
+      } else {
+        if (isExactMatch(data.results)) {
+          appendedIds = appendedIds.concat([data.results.local_id]);
+        }
       }
     } 
     return appendedIds;  
   };
 
-  xhr({
-    uri: uri,
-    headers: { 'Accept': 'application/json' }
-  }, function (err, resp, body) {
-    var pageIds = [];
-    if (resp.statusCode == 200) {
-      var result = JSON.parse(body);
-      if (result) {
-        var data = result.query.results.json.data;
-        if (Array.isArray(data)) {
-          pageIds = data.reduce(appendPageIds, pageIds);
-        } else {
-          pageIds = appendPageIds(pageIds, data);  
-        }
-        callback(pageIds);
-      }
-    } else {
-      callback(pageIds);
-    }
+  var q = queue();
+  q.timeout = 30000;
+  var allPageIds = [];
+  
+  var uris = [];
+  var nameChunkSize = 200;
+  for (var i=0; i <= names.length / nameChunkSize; i++) {
+    var start = i * nameChunkSize;
+    var namesChunk = names.slice(start, start + nameChunkSize);
+    var uri = taxon.resolverUrlFor(namesChunk);
+    uris.push(uri);
+  }
+
+  uris.forEach(function(uri){
+    q.push(function(cb) {
+      xhr({
+        uri: uri,
+        headers: { 'Accept': 'application/json' }
+      }, function (err, resp, body) {
+        var pageIds = [];
+        if (resp.statusCode == 200) {
+          var result = JSON.parse(body);
+            if (result) {
+              var data = result.query.results.json.data;
+              if (Array.isArray(data)) {
+                pageIds = data.reduce(appendPageIds, pageIds);
+              } else {
+                pageIds = appendPageIds(pageIds, data);  
+              }
+            }
+          } 
+          Array.prototype.push.apply(allPageIds, pageIds);
+          cb();
+      });
+    });
+  });
+  q.start(function(err) {
+    callback(allPageIds);
   });
 };
 
