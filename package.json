@@ -1,6 +1,6 @@
 {
   "name": "taxon",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "lookup ids for taxa",
   "main": "main.js",
   "dependencies": {
