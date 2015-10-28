@@ -11,7 +11,7 @@ test('get page id for Homo sapiens and Enhydra lutris', function(t) {
 test('duplicate page id for Homo sapiens', function(t) {
   t.plan(1);
   var ids = taxon.eolPageIdsFor(['Homo sapiens', 'Homo sapiens'], function(pageIds) {
-    t.deepEquals(pageIds, ['327955', '327955']);
+    t.deepEquals(pageIds, ['327955']);
   });
 });
 

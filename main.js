@@ -77,15 +77,18 @@ taxon.eolPageIdsFor = function(names, callback) {
     });
   });
   q.start(function(err) {
-    callback(allPageIds);
+    callback(uniq(allPageIds));
   });
 };
 
+var uniq = function(ids) {
+  return ids.filter(function(item, pos) {
+    return ids.indexOf(item) == pos;
+  });
+}
 
 taxon.saveAsCollection = function(callback, apiToken, ids, name, description) {
-  var uniqueIds = ids.filter(function(item, pos) {
-      return ids.indexOf(item) == pos;
-  });
+  var uniqueIds = uniq(ids);
 
   var items = uniqueIds.reduce(function(agg, id) { 
     return agg.concat([{collected_item_type: 'TaxonConcept', collected_item_id: id}]); },
