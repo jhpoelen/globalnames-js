@@ -3,22 +3,22 @@ taxon = require('../../');
 
 test('get page id for Homo sapiens and Enhydra lutris', function(t) {
   t.plan(1);
-  var ids = taxon.eolPageIdsFor(['Homo sapiens', 'Enhydra lutris'], function(pageIds) {
-    t.deepEquals(pageIds, ['327955', '328583']);
+  var ids = taxon.eolPageIdsFor(['Homo sapiens (Poelen 2015)', 'Enhydra lutris'], function(pageIds) {
+    t.deepEquals(pageIds, [ { name: 'Homo sapiens (Poelen 2015)', id: '327955'}, {name: 'Enhydra lutris', id: '328583'}]);
   });
 });
 
 test('duplicate page id for Homo sapiens', function(t) {
   t.plan(1);
   var ids = taxon.eolPageIdsFor(['Homo sapiens', 'Homo sapiens'], function(pageIds) {
-    t.deepEquals(pageIds, ['327955']);
+    t.deepEquals(pageIds, [{name: 'Homo sapiens', id: '327955'}]);
   });
 });
 
 test('get page id for Homo sapiens', function (t) {
   t.plan(1);
   var testCallback = function(pageIds) {
-    t.deepEquals(pageIds, ['327955']);
+    t.deepEquals(pageIds, [{name: 'Homo sapiens', id: '327955'}]);
   };
   var names = ['Homo sapiens'];
   taxon.eolPageIdsFor(names, testCallback);

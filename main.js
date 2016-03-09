@@ -16,24 +16,26 @@ taxon.resolverUrlFor = function(names) {
 
 taxon.eolPageIdsFor = function(names, callback) {
   var isExactMatch = function(result) { return ['1','2'].indexOf(result.match_type) != -1; };
-  var extractPageIds = function(results) {
+  
+
+  var extractPageIds = function(results, suppliedName) {
     var urlHash = results.reduce(function(agg, result) {
       if (isExactMatch(result)) {
-        agg[result.local_id] = result.local_id;
+        agg[result.local_id] = { name: suppliedName, id: result.local_id };
       }
       return agg;
     }, {});
-    return Object.keys(urlHash); 
+    return Object.keys(urlHash).map(function(key) { return urlHash[key]; }); 
   };
 
   var appendPageIds = function(ids, data) {
     appendedIds = [].concat(ids);
     if (data && data.results) {
       if (Array.isArray(data.results)) {
-        appendedIds = appendedIds.concat(extractPageIds(data.results));
+        appendedIds = appendedIds.concat(extractPageIds(data.results, data.supplied_name_string));
       } else {
         if (isExactMatch(data.results)) {
-          appendedIds = appendedIds.concat([data.results.local_id]);
+          appendedIds = appendedIds.concat({name: data.supplied_name_string, id: data.results.local_id});
         }
       }
     } 
@@ -46,9 +48,10 @@ taxon.eolPageIdsFor = function(names, callback) {
   
   var uris = [];
   var nameChunkSize = 200;
-  for (var i=0; i <= names.length / nameChunkSize; i++) {
+  var uniqueNames = uniq(names);
+  for (var i=0; i <= uniqueNames.length / nameChunkSize; i++) {
     var start = i * nameChunkSize;
-    var namesChunk = names.slice(start, start + nameChunkSize);
+    var namesChunk = uniqueNames.slice(start, start + nameChunkSize);
     var uri = taxon.resolverUrlFor(namesChunk);
     uris.push(uri);
   }
