@@ -15,7 +15,7 @@ Lookup an eol page id for a list of names.
 ```js
 var taxon = require('taxon');
 
-var ids = taxon.eolPageIdsForNames(['Homo sapiens', 'Enhydra lutris']);
+taxon.eolPageIdsFor(['Homo sapiens', 'Enhydra lutris'], function(pageIds) { console.log(pageIds); });
 
 # expected results: ['327955', '328583']
 ```
