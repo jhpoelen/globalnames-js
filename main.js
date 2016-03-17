@@ -40,7 +40,7 @@ taxon.eolPageIdsFor = function(names, callback) {
   var allPageIds = [];
   
   var uris = [];
-  var nameChunkSize = 200;
+  var nameChunkSize = 50;
   var uniqueNames = uniq(names);
   for (var i=0; i <= uniqueNames.length / nameChunkSize; i++) {
     var start = i * nameChunkSize;
