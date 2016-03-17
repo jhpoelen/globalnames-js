@@ -2,20 +2,13 @@ var xhr = require('xhr');
 var queue = require('queue');
 var taxon = {};
 
-taxon.proxiedUrl = function(url) {
-  var query = encodeURIComponent('select * from json where url="' + url + '"');
-  var uri = 'http://query.yahooapis.com/v1/public/yql?q=' + query;
-  return uri;
-}
-
 taxon.resolverUrlFor = function(names) {
   var namesString = encodeURIComponent(names.join('|'));
-  var url = 'http://resolver.globalnames.org/name_resolvers.json?names=' + namesString + '&data_source_ids=12';
-  return taxon.proxiedUrl(url);
+  return 'http://res.globalnames.org/name_resolvers.json?names=' + namesString + '&data_source_ids=12';
 };
 
 taxon.eolPageIdsFor = function(names, callback) {
-  var isExactMatch = function(result) { return ['1','2'].indexOf(result.match_type) != -1; };
+  var isExactMatch = function(result) { return [1,2].indexOf(result.match_type) != -1; };
   
 
   var extractPageIds = function(results, suppliedName) {
@@ -65,17 +58,17 @@ taxon.eolPageIdsFor = function(names, callback) {
         var pageIds = [];
         if (resp.statusCode == 200) {
           var result = JSON.parse(body);
-            if (result.query && result.query.results && result.query.results.json) {
-              var data = result.query.results.json.data;
-              if (Array.isArray(data)) {
-                pageIds = data.reduce(appendPageIds, pageIds);
-              } else {
-                pageIds = appendPageIds(pageIds, data);  
-              }
+          if (result.data) {
+            var data = result.data;
+            if (Array.isArray(data)) {
+              pageIds = data.reduce(appendPageIds, pageIds);
+            } else {
+              pageIds = appendPageIds(pageIds, data);  
             }
-          } 
-          Array.prototype.push.apply(allPageIds, pageIds);
-          cb();
+          }
+        } 
+        Array.prototype.push.apply(allPageIds, pageIds);
+        cb();
       });
     });
   });
