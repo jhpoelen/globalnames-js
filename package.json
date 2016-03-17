@@ -1,6 +1,6 @@
 {
   "name": "taxon",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "lookup ids for taxa",
   "main": "main.js",
   "dependencies": {
@@ -20,9 +20,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/jhpoelen/taxon.git"
+    "url": "git://github.com/jhpoelen/node-taxon.git"
   },
-  "homepage": "https://github.com/jhpoelen/taxon",
+  "homepage": "https://github.com/jhpoelen/node-taxon",
   "keywords": [
     "taxonomy",
     "biology",
