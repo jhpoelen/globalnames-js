@@ -109,6 +109,25 @@ taxon.saveAsCollection = function(callback, apiToken, ids, name, description) {
       callback(null, resp, reqBody);
     }
   });
-}
+};
+
+var parsePath = function(taxonPath) {
+    return (taxonPath ? taxonPath : '').split('|')
+        .map(function(elem) {return elem.trim();})
+        .filter(function(elem) {return elem.length > 0;})
+};
+
+taxon.shortKeyFor = function(taxonPath) {
+    return parsePath(taxonPath)
+        .reverse().slice(0,3).reverse()
+        .join('.');
+};
+
+
+taxon.pipesToDots = function(taxonPath) {
+    return parsePath(taxonPath)
+        .join('.');
+};
+
 
 module.exports = taxon;
